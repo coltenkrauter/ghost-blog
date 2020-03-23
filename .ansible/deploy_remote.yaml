@@ -1,0 +1,10 @@
+# ansible-playbook deploy_local.yaml -i inventories/local/hosts --vault-id ~/.tokens/vault.txt
+
+- hosts: docs_server
+  strategy: linear
+  roles:
+    - copy_to_remote
+    - build # Should happen on tools server
+    - push # Should happen on tools server
+    - deploy
+    - cleanup_remote

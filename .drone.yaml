@@ -1,0 +1,49 @@
+kind: pipeline
+name: default
+
+steps:
+- name: Running Ansible playbook against DEV
+  image: plugins/ansible:1
+  environment:
+    ENV: dev
+    DRONE_BRANCH: $DRONE_BRANCH
+    DRONE_BUILD_CREATED: $DRONE_BUILD_CREATED
+    DRONE_BUILD_NUMBER: $DRONE_BUILD_NUMBER
+    DRONE_COMMIT: $DRONE_COMMIT
+    DRONE_COMMIT_LINK: $DRONE_COMMIT_LINK
+    ANSIBLE_CONFIG: .ansible/ansible.cfg
+  settings:
+    playbook: .ansible/deploy_remote.yaml
+    inventory: .ansible/inventories/development/hosts
+    private_key:
+      from_secret: ansible_private_key
+    vault_password:
+      from_secret: ansible_vault_password
+  when:
+    branch:
+    - development
+    event:
+    - push
+
+- name: Running Ansible playbook against PROD
+  image: plugins/ansible:1
+  environment:
+    ENV: prod
+    DRONE_BRANCH: $DRONE_BRANCH
+    DRONE_BUILD_CREATED: $DRONE_BUILD_CREATED
+    DRONE_BUILD_NUMBER: $DRONE_BUILD_NUMBER
+    DRONE_COMMIT: $DRONE_COMMIT
+    DRONE_COMMIT_LINK: $DRONE_COMMIT_LINK
+    ANSIBLE_CONFIG: .ansible/ansible.cfg
+  settings:
+    playbook: .ansible/deploy_remote.yaml
+    inventory: .ansible/inventories/production/hosts
+    private_key:
+      from_secret: ansible_private_key
+    vault_password:
+      from_secret: ansible_vault_password
+  when:
+    branch:
+    - stable
+    event:
+    - push

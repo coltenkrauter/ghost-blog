@@ -1,0 +1,15 @@
+all:
+  children:
+    docs_server:
+      hosts:
+        coltenkrauter.com:
+    local_server:
+      hosts:
+        127.0.0.1
+      vars:
+        ansible_connection: local
+        ansible_python_interpreter: /usr/bin/python
+  vars:
+    ansible_connection: ssh
+    ansible_user: ubuntu
+    ansible_python_interpreter: /usr/bin/python3

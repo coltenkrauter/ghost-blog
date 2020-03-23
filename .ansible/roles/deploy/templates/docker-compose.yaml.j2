@@ -1,0 +1,26 @@
+version: "{{ docker_compose_version }}"
+services:
+
+  ui:
+    image: {{ docker_image }}
+{% if local %}
+    ports: 
+     - target: 80
+       published: {{ port }}
+       protocol: tcp
+       mode: host
+{% endif %}
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.frontend.rule=Host:{{ cname }},www.{{ cname }}
+        - traefik.frontend.priority=3
+        - traefik.port=2368
+        - traefik.docker.network={{ docker_network }}
+    networks:
+      - {{ docker_network }}
+    environment:
+      - url={{ cname }}
+networks:
+  {{ docker_network }}:
+    external: true

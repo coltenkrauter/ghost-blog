@@ -1,0 +1,4 @@
+- name: "Blow away directory: {{ app_root_dir }}"
+  file:
+    path: "{{ app_root_dir }}"
+    state: absent

@@ -1,0 +1,15 @@
+- name: "Create directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0740"
+    owner: "{{ ansible_user }}"
+  with_items:
+    - "{{ builds_dir }}"
+    - "{{ app_root_dir }}"
+  become: yes
+
+- name: Synchronization of src on the control machine to dest on the remote hosts
+  synchronize:
+    src: "{{ app_root_dir_drone }}"
+    dest: "{{ app_root_dir }}"

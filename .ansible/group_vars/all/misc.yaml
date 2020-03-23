@@ -1,0 +1,2 @@
+builds_dir: "{{ home_dir }}/drone_builds"
+random_dir: "{{ tmp_dir }}/{{ random_uuid }}"

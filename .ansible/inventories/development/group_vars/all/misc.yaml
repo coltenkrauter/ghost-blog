@@ -1,0 +1,14 @@
+env: "development"
+env_short: "dev"
+env_description: "{{ env }} - {{ project_name }}" # For Slack error log
+production: false
+local: false
+home_dir: /home/{{ ansible_user }}
+ansible_dir: "{{ home_dir }}/.ansible"
+tmp_dir: "{{ ansible_dir }}/.compose"
+cname: "{{ env }}.susiecreative.com"
+url: "https://{{ cname }}"
+app_root_dir_drone: /drone/src/
+app_root_dir: "{{ builds_dir }}/{{ lookup('env','DRONE_BRANCH') }}-{{ lookup('env','DRONE_BUILD_NUMBER') }}"
+commit: "{{ lookup('env','DRONE_COMMIT') }}"
+commit_link: "{{ lookup('env','DRONE_COMMIT_LINK') }}"

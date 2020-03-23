@@ -1,0 +1,69 @@
+- name: "Blow away directory: {{ tmp_dir }}"
+  file:
+    path: "{{ tmp_dir }}"
+    state: absent
+  when: local | bool
+
+- name: "Create temp directory: {{ random_dir }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0740"
+  with_items:
+    - "{{ ansible_dir }}"
+    - "{{ tmp_dir }}"
+    - "{{ random_dir }}"
+
+- name: Render the docker-compose.yaml template
+  template:
+    src: ./templates/docker-compose.yaml.j2
+    dest: "{{ random_dir }}/docker-compose.yaml"
+    mode: "0740"
+
+- name: "Creating {{ docker_network }} network"
+  shell: "docker network create --driver=overlay --attachable {{ docker_network }}"
+  ignore_errors: yes
+
+- name: "Logging into docker"
+  shell: "docker login {{ docker_registry_url }} -u {{ docker_registry_username }} --password-stdin"
+  args:
+    stdin: "{{ docker_registry_password }}"
+  register: login
+  when: not local | bool
+- debug: msg={{ login.stdout }}
+  when: not local | bool
+  
+- name: "Deploy {{ docker_stack }} stack"
+  shell: "docker stack deploy --with-registry-auth --prune -c docker-compose.yaml {{ docker_stack }}"
+  args:
+    chdir: "{{ random_dir }}"
+  retries: 5
+  delay: 3
+  register: result
+  until: result.rc == 0
+
+- name: "Blow away directory: {{ random_dir }}"
+  file:
+    path: "{{ random_dir }}"
+    state: absent
+  when: not local | bool
+
+- name: "Get all existing stacks"
+  shell: "docker stack ls --format {% raw %}'{{ .Name }}'{% endraw %} | grep {{ project_name }}_{{ env }}"
+  register: stacks
+  ignore_errors: yes
+
+- debug: var=stacks.stdout_lines
+
+- name: "Remove {{ docker_stack }} stack"
+  shell: "docker stack rm {{ item }}"
+  when: item != docker_stack
+  loop: "{{ stacks.stdout_lines }}"
+  ignore_errors: yes
+
+- name: "Get all existing stacks"
+  shell: "docker stack ls --format {% raw %}'{{ .Name }}'{% endraw %} | grep {{ project_name }}_{{ env }}"
+  register: stacks
+  ignore_errors: yes
+
+- debug: var=stacks.stdout_lines

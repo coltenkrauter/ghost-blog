@@ -1,0 +1,5 @@
+# docker configuration
+docker_tag: local-latest
+docker_image: ghost:3
+build_number: "N"
+docker_stack: "{{ project_name }}_{{ env }}_build_{{ build_number }}"

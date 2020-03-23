@@ -1,0 +1,7 @@
+# docker configuration
+docker_tag: "{{ env }}-latest"
+
+docker_compose_version: 3.7
+docker_repository: "{{ project_name }}"
+build_number: "{{ lookup('env','DRONE_BUILD_NUMBER') }}"
+docker_stack: "{{ project_name }}_{{ env }}_build_{{ build_number }}"

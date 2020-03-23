@@ -1,0 +1,14 @@
+env: "local"
+env_short: ""
+env_description: "{{ env }} - {{ project_name }} - Colten" # For Slack error log
+production: false
+local: true
+home_dir: ~
+ansible_dir: "{{ playbook_dir }}"
+tmp_dir: "{{ ansible_dir }}/.compose"
+cname: "localhost"
+app_root_dir: "{{ playbook_dir }}/.."
+port: 8181
+url: http://localhost:{{ port }}/
+commit: "{{ random_uuid }}"
+commit_link: "#"
