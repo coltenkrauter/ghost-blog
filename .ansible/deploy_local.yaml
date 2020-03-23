@@ -3,5 +3,4 @@
 - hosts: local_server
   strategy: linear
   roles:
-    - build
     - deploy

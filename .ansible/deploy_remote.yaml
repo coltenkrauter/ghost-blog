@@ -4,7 +4,6 @@
   strategy: linear
   roles:
     - copy_to_remote
-    - build # Should happen on tools server
     - push # Should happen on tools server
     - deploy
     - cleanup_remote
